@@ -106,7 +106,7 @@ for iev,ev in enumerate(events):
         j = 0
         for i in xrange(min(br.max_nGenPart,len(genparticles))):
             part = genparticles[i]
-            if len(genparticles)!=2 and part.status()!=23: continue
+            if len(genparticles)>2 and part.status()!=23: continue
             FillGenPart(part,j)
             j += 1
         for i in xrange(min(br.max_nClus,len(clusters))):
@@ -118,7 +118,7 @@ for iev,ev in enumerate(events):
         for k in xrange(min(br.max_nGenPart,len(genparticles))):
             Reset()
             part = genparticles[k]
-            if len(genparticles)!=2 and part.status()!=23: continue
+            if len(genparticles)>2 and part.status()!=23: continue
             FillGenPart(part,0)
             best = 0
             for i in xrange(len(clusters)):
