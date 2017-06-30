@@ -3,6 +3,7 @@
 
 #include "FastPUPPI/NtupleProducer/interface/L1TPFUtils.h"
 #include "DataFormats/Candidate/interface/LeafCandidate.h"
+#include "DataFormats/DetId/interface/DetIdCollection.h"
 #include <TLorentzVector.h>
 
 namespace l1tpf {
@@ -93,6 +94,12 @@ namespace l1tpf {
                 setP4(p4() + other.p4());
             }
 
+	    DetIdCollection& getDetIdCollection() {return detIds_;}
+	    DetId getDetId(unsigned int index) const {return (index < detIds_.size()) ? detIds_[index] : DetId(0); }
+	    void setDetIds(const DetIdCollection &coll) {
+	      detIds_ = coll;
+	    }
+
         protected:
             float dZ_;
             float sigma_;
@@ -101,6 +108,7 @@ namespace l1tpf {
             int isPV_;
             float hOverE_, rawEmEt_, chi2n_;
             float alphaF_, alphaC_, puppiWeight_;
+	    DetIdCollection detIds_;
     }; // class
 } // namespace
 

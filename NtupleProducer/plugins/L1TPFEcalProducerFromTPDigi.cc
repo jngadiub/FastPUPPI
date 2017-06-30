@@ -9,6 +9,7 @@
 
 #include "DataFormats/EcalDetId/interface/EBDetId.h"
 #include "DataFormats/EcalDigi/interface/EcalDigiCollections.h"
+#include "DataFormats/DetId/interface/DetIdCollection.h"
 #include "FastPUPPI/NtupleProducer/interface/L1TPFParticle.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 
@@ -26,8 +27,8 @@ namespace l1tpf {
             virtual void produce(edm::Event&, const edm::EventSetup&) override;
 
             struct SimpleHit { 
-                float et, eta, phi; 
-                SimpleHit(float aet, float aeta, float aphi) : et(aet), eta(aeta), phi(aphi) {}
+	      float et, eta, phi; DetId id;
+	      SimpleHit(float aet, float aeta, float aphi, DetId aid) : et(aet), eta(aeta), phi(aphi), id(aid) {}
             };
 
     }; // class
@@ -64,22 +65,27 @@ l1tpf::EcalProducerFromTPDigi::produce(edm::Event &iEvent, const edm::EventSetup
         if (et <= etCut_) continue;
         const GlobalPoint & pos = caloGeom->getPosition(TPid);
         out_crystal->emplace_back(et, pos.eta(), pos.phi(), 0., 0);
-	towers[std::make_pair(TPid.tower_ieta(),TPid.tower_iphi())].emplace_back(et, pos.eta(), pos.phi());
+	DetIdCollection detIds_;
+	detIds_.push_back(TPid);
+	out_crystal->back().setDetIds(detIds_);
+	towers[std::make_pair(TPid.tower_ieta(),TPid.tower_iphi())].emplace_back(et, pos.eta(), pos.phi(), TPid);
     }
 
     for (const auto & pair : towers) {
-        double etsum = 0., etaetsum = 0., phietsum = 0.; 
+        double etsum = 0., etaetsum = 0., phietsum = 0.; DetIdCollection idsum;
         double reta = pair.second.front().eta, rphi = pair.second.front().phi;
         for (const SimpleHit & hit : pair.second) {
 	  etsum += hit.et;
 	  etaetsum += (hit.eta - reta) * hit.et;
 	  phietsum += reco::deltaPhi(hit.phi, rphi) * hit.et;
+	  idsum.push_back(hit.id);
         }
 	if(etsum > 0)  {
 	  etaetsum /= etsum;
 	  phietsum /= etsum;
 	}
 	out_tower->emplace_back(etsum, etaetsum + reta, reco::deltaPhi(phietsum + rphi, 0.), 0., 0);
+	out_tower->back().setDetIds(idsum);
     }
 
     iEvent.put(std::move(out_crystal), "crystals");

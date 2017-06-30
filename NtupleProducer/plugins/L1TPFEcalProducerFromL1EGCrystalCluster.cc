@@ -28,7 +28,6 @@ l1tpf::EcalProducerFromL1EGCrystalCluster::EcalProducerFromL1EGCrystalCluster(co
     etCut_(iConfig.getParameter<double>("etMin"))
 {
     produces<std::vector<l1tpf::Particle>>();
-    produces<l1slhc::L1EGCrystalClusterCollection>("FilteredL1EGXtalClusterNoCuts");
 }
 
 
@@ -36,7 +35,6 @@ void
 l1tpf::EcalProducerFromL1EGCrystalCluster::produce(edm::Event &iEvent, const edm::EventSetup &iSetup) 
 {
     std::unique_ptr<std::vector<l1tpf::Particle>> out(new std::vector<l1tpf::Particle>());
-    std::unique_ptr<l1slhc::L1EGCrystalClusterCollection> outclusters(new l1slhc::L1EGCrystalClusterCollection());
     edm::Handle<l1slhc::L1EGCrystalClusterCollection> clusters;
     iEvent.getByToken(src_, clusters);
 
@@ -44,11 +42,10 @@ l1tpf::EcalProducerFromL1EGCrystalCluster::produce(edm::Event &iEvent, const edm
         if (it->pt() <= etCut_) continue;
         out->emplace_back(it->pt(), it->eta(), it->phi(), 0., 0);
         out->back().setHOverE(it->hovere());
-	outclusters->push_back(*it);
+	out->back().setDetIds(it->GetDetIdCollection());
     }
 
     iEvent.put(std::move(out));
-    iEvent.put(std::move(outclusters),"FilteredL1EGXtalClusterNoCuts");
 }
 using l1tpf::EcalProducerFromL1EGCrystalCluster;
 DEFINE_FWK_MODULE(EcalProducerFromL1EGCrystalCluster);
