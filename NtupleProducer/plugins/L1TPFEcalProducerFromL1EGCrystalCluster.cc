@@ -43,6 +43,7 @@ l1tpf::EcalProducerFromL1EGCrystalCluster::produce(edm::Event &iEvent, const edm
         out->emplace_back(it->pt(), it->eta(), it->phi(), 0., 0);
         out->back().setHOverE(it->hovere());
 	out->back().setDetIds(it->GetDetIdCollection());
+	out->back().setSeed(it->seedCrystal());
     }
 
     iEvent.put(std::move(out));

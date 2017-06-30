@@ -1,5 +1,6 @@
 <lcgdict>
-    <class name="l1tpf::Particle"  ClassVersion="15">
+    <class name="l1tpf::Particle"  ClassVersion="16">
+     <version ClassVersion="16" checksum="4056989465"/>
      <version ClassVersion="15" checksum="1534863565"/>
         <version ClassVersion="14" checksum="1533990414"/>
         <version ClassVersion="13" checksum="1887087016"/>

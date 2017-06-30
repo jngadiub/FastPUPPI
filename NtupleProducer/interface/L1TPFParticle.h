@@ -99,6 +99,8 @@ namespace l1tpf {
 	    void setDetIds(const DetIdCollection &coll) {
 	      detIds_ = coll;
 	    }
+	    DetId getSeed(){ return seed_; }
+	    void setSeed(const DetId &id) { seed_ = id; }
 
         protected:
             float dZ_;
@@ -109,6 +111,7 @@ namespace l1tpf {
             float hOverE_, rawEmEt_, chi2n_;
             float alphaF_, alphaC_, puppiWeight_;
 	    DetIdCollection detIds_;
+	    DetId seed_;
     }; // class
 } // namespace
 

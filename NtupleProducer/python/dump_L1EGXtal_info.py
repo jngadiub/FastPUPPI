@@ -50,8 +50,8 @@ def diphi(phi1,phi2):
     return x
 
 
-h_xtals = Handle('vector<pair<DetId,float> >')
-h_clusters = Handle('vector<l1slhc::L1EGCrystalCluster>')
+h_xtals = Handle('vector<l1tpf::Particle>')
+h_clusters = Handle('vector<l1tpf::Particle>')
 h_genparticles = Handle('vector<reco::GenParticle>')
 
 addCollection('Xtal',['pt','ieta','iphi'],10000)
@@ -74,8 +74,8 @@ def FillGenPart(part,i):
     br.GenPart_status[i] = part.status()
     br.nGenPart[0] += 1
 def FillXtal(xtal,i,relativeto=None):
-    br.Xtal_pt[i] = xtal.second
-    id_ = (xtal.first)()
+    br.Xtal_pt[i] = xtal.pt()
+    id_ = (xtal.getSeed())()
     br.Xtal_ieta[i] = ieta(id_) if relativeto==None else dieta(ieta(id_),ieta(relativeto))
     br.Xtal_iphi[i] = iphi(id_) if relativeto==None else diphi(iphi(id_),iphi(relativeto))
     br.nXtal[0] += 1
@@ -85,8 +85,8 @@ def FillClus(clus,i):
     br.Clus_phi[i] = clus.phi()
     br.nClus[0] += 1
 def FillXtalInClus(xtal,i,seedid):
-    br.XtalInClus_pt[i] = xtal.second
-    id_ = (xtal.first)()
+    br.XtalInClus_pt[i] = xtal.pt()
+    id_ = (xtal.getSeed())()
     br.XtalInClus_dieta[i] = dieta(ieta(id_),ieta(seedid))
     br.XtalInClus_diphi[i] = diphi(iphi(id_),iphi(seedid))
     br.nXtalInClus[0] += 1
@@ -94,8 +94,8 @@ def FillXtalInClus(xtal,i,seedid):
 
 for iev,ev in enumerate(events):
     if iev%100==0: print 'Processing event %d'%(iev+1,)
-    ev.getByLabel(("L1EGammaCrystalsProducer","L1EGXtals"),h_xtals)
-    ev.getByLabel(("l1tPFEcalProducerFromL1EGCrystalClusters","FilteredL1EGXtalClusterNoCuts"),h_clusters)
+    ev.getByLabel(("l1tPFEcalProducerFromTPDigis","crystals"),h_xtals)
+    ev.getByLabel(("l1tPFEcalProducerFromL1EGCrystalClusters",""),h_clusters)
     ev.getByLabel(("genParticles",""),h_genparticles)
     xtals = h_xtals.product()
     clusters = h_clusters.product()
@@ -129,13 +129,13 @@ for iev,ev in enumerate(events):
                 best = -1-i
             if best!=0:
                 clus = clusters[best]
-                seedid = (clus.seedCrystal())()
+                seedid = (clus.getSeed())()
                 FillClus(clus,0)
-                for i in xrange(clus.GetNXtals()):
-                    FillXtalInClus(filter(lambda xtal: (xtal.first)()==clus.GetDetId(i)(), xtals)[0],i,seedid)
+                for i in xrange(clus.getDetIdCollection().size()):
+                    FillXtalInClus(filter(lambda xtal: (xtal.getSeed())()==clus.getDetId(i)(), xtals)[0],i,seedid)
                 j = 0
                 for i in xrange(min(br.max_nXtal,len(xtals))):
-                    id_ = (xtals[i].first)()
+                    id_ = (xtals[i].getSeed())()
                     if abs(dieta(ieta(id_),ieta(seedid)))<10 and abs(diphi(iphi(id_),iphi(seedid)))<10:
                         FillXtal(xtals[i],j,seedid)
                         j+=1

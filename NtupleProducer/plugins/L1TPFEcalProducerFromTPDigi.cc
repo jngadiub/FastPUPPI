@@ -68,6 +68,7 @@ l1tpf::EcalProducerFromTPDigi::produce(edm::Event &iEvent, const edm::EventSetup
 	DetIdCollection detIds_;
 	detIds_.push_back(TPid);
 	out_crystal->back().setDetIds(detIds_);
+	out_crystal->back().setSeed(TPid);
 	towers[std::make_pair(TPid.tower_ieta(),TPid.tower_iphi())].emplace_back(et, pos.eta(), pos.phi(), TPid);
     }
 
@@ -86,6 +87,7 @@ l1tpf::EcalProducerFromTPDigi::produce(edm::Event &iEvent, const edm::EventSetup
 	}
 	out_tower->emplace_back(etsum, etaetsum + reta, reco::deltaPhi(phietsum + rphi, 0.), 0., 0);
 	out_tower->back().setDetIds(idsum);
+	out_tower->back().setSeed(DetId(0));
     }
 
     iEvent.put(std::move(out_crystal), "crystals");
