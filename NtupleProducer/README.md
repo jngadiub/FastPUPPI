@@ -8,21 +8,21 @@ git cms-init
 git remote add cms-l1t-offline git@github.com:cms-l1t-offline/cmssw.git
 git fetch cms-l1t-offline
 git cms-merge-topic -u cms-l1t-offline:l1t-phase2-v1.14.1
-git clone git@github.com:p2l1pfp/FastPUPPI.git -b 92X
+git clone git@github.com:jngadiub/FastPUPPI.git -b pf-ml-l1
 scram b -j8
 ```
 
-The first step is to produce the inputs:
+To produce the L1PF inputs:
 ```
-cd FastPUPPI/NtupleProducer/python/runInputs.py
-cmsRun runInputs.py
+cd FastPUPPI/NtupleProducer/python/
+cmsRun FastPUPPI/NtupleProducer/python/runInputs.py
 ```
 
 Example how to submit jobs to the lxbatch:
 ```
 cd FastPUPPI/NtupleProducer/python
-./scripts/cmsSplit.pl --dataset /SingleE_FlatPt-8to100/PhaseIISpring17D-NoPU_90X_upgrade2023_realistic_v9-v1/GEN-SIM-DIGI-RAW --jobs 1 --events-per-job 10 --label test runInputs.py --lsf 1nh --eosoutdir /eos/cms/store/cmst3/user/jngadiub/L1PFInputs/
-./runInputs_test_bsub.sh
+./scripts/cmsSplit.pl --dataset /SinglePion0_FlatPt-8to100/PhaseIISpring17D-PU140_90X_upgrade2023_realistic_v9-v1/GEN-SIM-DIGI-RAW --files-per-job 1 --label SinglePion0_PU140 runInputs.py --lsf 8nh --eosoutdir /eos/cms/store/cmst3/group/dehep/L1PFInputs/SinglePion0_PU140
+runInputs_SinglePion0_PU140_bsub.sh
 ```
 For more options for job splitting:
 ```
@@ -32,20 +32,8 @@ The job outputs are copied to the eos directory --eosoutdir
 
 When jobs are finished you can clean up your local dir
 ```
-./runInputs_test_cleanup.sh
+./runInputs_SinglePion0_PU140_cleanup.sh
 ```
-
-The second step runs the algorithm and creates ntuples which can be used to do analysis:
-```
-cmsRun runNtupleProducer_cfg.py
-cmsRun runJetNTupler.py
-cmsRun runRespNTupler.py
-```
-`Should we try to collate all of these?`
-
-The plotting scripts are in:
-```FastPUPPI/NtupleProducer/python/scripts```
-
 
 The trigger MC can be found on DAS `dataset=/*/*PhaseIISpring17D*/*`
 
