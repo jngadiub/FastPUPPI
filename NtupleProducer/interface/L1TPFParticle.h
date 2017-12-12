@@ -111,7 +111,7 @@ namespace l1tpf {
             float hOverE_, rawEmEt_, chi2n_;
             float alphaF_, alphaC_, puppiWeight_;
 	    DetIdCollection detIds_;
-	    DetId seed_;
+	    DetId seed_;	    
     }; // class
 } // namespace
 

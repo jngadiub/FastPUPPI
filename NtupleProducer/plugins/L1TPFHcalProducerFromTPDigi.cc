@@ -18,6 +18,7 @@
 #include "DataFormats/HcalDetId/interface/HcalTrigTowerDetId.h"
 #include "CalibFormats/CaloTPG/interface/CaloTPGTranscoder.h"
 #include "CalibFormats/CaloTPG/interface/CaloTPGRecord.h"
+#include "DataFormats/DetId/interface/DetIdCollection.h"
 
 
 namespace l1tpf {
@@ -57,16 +58,20 @@ l1tpf::HcalProducerFromTPDigi::produce(edm::Event &iEvent, const edm::EventSetup
   //const CaloGeometry* geo = calo.product(); 
   //iSetup.get<CaloGeometryRecord>().get(theTrigTowerGeometry);
   //const HcalTrigTowerGeometry* geoTrig = theTrigTowerGeometry.product();
-
+  
   edm::Handle< HcalTrigPrimDigiCollection > hcalTPs;
   iEvent.getByToken(HcalTPTag_, hcalTPs);
   for (const auto & itr : *hcalTPs) {
       HcalTrigTowerDetId id = itr.id();
+      DetIdCollection HcalTrigTowerDetIdCollection; //this vector has size 1 for HCAL
+      HcalTrigTowerDetIdCollection.push_back(id);
       double et = decoder_->hcaletValue(itr.id(), itr.t0());
       if (et <= 0) continue;
       float towerEta = l1t::CaloTools::towerEta(id.ieta());
       float towerPhi = l1t::CaloTools::towerPhi(id.ieta(), id.iphi());
       out->emplace_back( et, towerEta, towerPhi, 0,  0,0,0, towerEta, towerPhi, 0 );
+      out->back().setDetIds(HcalTrigTowerDetIdCollection);
+      //std::cout << " ************************* " << id.ieta() << std::endl;
   }
 
   iEvent.put(std::move(out));

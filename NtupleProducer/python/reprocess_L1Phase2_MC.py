@@ -158,30 +158,30 @@ process.CaloTowerTopologyEP = cms.ESProducer("CaloTowerTopologyEP")
 #from SimTracker.TrackTriggerAssociation.TTTrackAssociation_cfi import *
 #TrackTriggerAssociatorTracks = cms.Sequence(TTTrackAssociatorFromPixelDigis)
 
-process.load('L1Trigger.L1THGCal.hgcalTriggerPrimitives_cff')
+#process.load('L1Trigger.L1THGCal.hgcalTriggerPrimitives_cff')
 # Remove best choice selection
-process.hgcalTriggerPrimitiveDigiProducer.FECodec.NData = cms.uint32(999)
-process.hgcalTriggerPrimitiveDigiProducer.FECodec.DataLength = cms.uint32(8)
-process.hgcalTriggerPrimitiveDigiProducer.FECodec.triggerCellTruncationBits = cms.uint32(7)
+#process.hgcalTriggerPrimitiveDigiProducer.FECodec.NData = cms.uint32(999)
+#process.hgcalTriggerPrimitiveDigiProducer.FECodec.DataLength = cms.uint32(8)
+#process.hgcalTriggerPrimitiveDigiProducer.FECodec.triggerCellTruncationBits = cms.uint32(7)
 
-process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].calib_parameters.cellLSB = cms.double(
-        process.hgcalTriggerPrimitiveDigiProducer.FECodec.linLSB.value() * 
-        2 ** process.hgcalTriggerPrimitiveDigiProducer.FECodec.triggerCellTruncationBits.value() 
-)
+#process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].calib_parameters.cellLSB = cms.double(
+#        process.hgcalTriggerPrimitiveDigiProducer.FECodec.linLSB.value() * 
+#        2 ** process.hgcalTriggerPrimitiveDigiProducer.FECodec.triggerCellTruncationBits.value() 
+#)
 
-cluster_algo_all =  cms.PSet( AlgorithmName = cms.string('HGCClusterAlgoBestChoice'),
-                              FECodec = process.hgcalTriggerPrimitiveDigiProducer.FECodec,
-                              HGCalEESensitive_tag = cms.string('HGCalEESensitive'),
-                              HGCalHESiliconSensitive_tag = cms.string('HGCalHESiliconSensitive'),                           
-                              calib_parameters = process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].calib_parameters,
-                              C2d_parameters = process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].C2d_parameters,
-                              C3d_parameters = process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].C3d_parameters
-                              )
+#cluster_algo_all =  cms.PSet( AlgorithmName = cms.string('HGCClusterAlgoBestChoice'),
+#                              FECodec = process.hgcalTriggerPrimitiveDigiProducer.FECodec,
+#                              HGCalEESensitive_tag = cms.string('HGCalEESensitive'),
+#                              HGCalHESiliconSensitive_tag = cms.string('HGCalHESiliconSensitive'),                           
+#                              calib_parameters = process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].calib_parameters,
+#                              C2d_parameters = process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].C2d_parameters,
+#                              C3d_parameters = process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms[0].C3d_parameters
+#                              )
 
 
-process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms = cms.VPSet( cluster_algo_all )
+#process.hgcalTriggerPrimitiveDigiProducer.BEConfiguration.algorithms = cms.VPSet( cluster_algo_all )
 
-process.hgcl1tpg_step = cms.Path(process.hgcalTriggerPrimitives)
+#process.hgcl1tpg_step = cms.Path(process.hgcalTriggerPrimitives)
 
 
 # load ntuplizer
@@ -209,7 +209,8 @@ process.FEVTDEBUGHLToutput_step = cms.EndPath(process.FEVTDEBUGHLToutput)
 
 # Schedule definition
 #process.schedule = cms.Schedule(process.HcalTPsimulation_step,process.L1simulation_step,process.L1TrackTrigger_step,process.EcalEBtp_step,process.hgcl1tpg_step,process.endjob_step,process.FEVTDEBUGHLToutput_step)
-process.schedule = cms.Schedule(process.L1simulation_step,process.L1TrackTrigger_step,process.hgcl1tpg_step,process.endjob_step,process.FEVTDEBUGHLToutput_step)
+#process.schedule = cms.Schedule(process.L1simulation_step,process.L1TrackTrigger_step,process.hgcl1tpg_step,process.endjob_step,process.FEVTDEBUGHLToutput_step) with hgcal
+process.schedule = cms.Schedule(process.L1simulation_step,process.L1TrackTrigger_step,process.endjob_step,process.FEVTDEBUGHLToutput_step)
 
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
