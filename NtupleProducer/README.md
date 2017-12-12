@@ -34,6 +34,11 @@ When jobs are finished you can clean up your local dir
 ./runInputs_SinglePion0_PU140_cleanup.sh
 ```
 
+Dump PF inputs to produce the ntuple for the ML algo:
+```
+python python/scripts/dump_L1EGXtal_HCAL_info.py /eos/cms/store/cmst3/group/dehep/L1PFInputs/SinglePion0_PU140/inputs_17D_SinglePion0_PU140_job2.root out_tree.root
+``` 
+
 The trigger MC can be found on DAS `dataset=/*/*PhaseIISpring17D*/*`
 
 Other resources: <br>
