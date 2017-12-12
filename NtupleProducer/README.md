@@ -14,7 +14,6 @@ scram b -j8
 
 To produce the L1PF inputs:
 ```
-cd FastPUPPI/NtupleProducer/python/
 cmsRun FastPUPPI/NtupleProducer/python/runInputs.py
 ```
 
